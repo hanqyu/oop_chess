@@ -64,6 +64,52 @@ public class MoveValidator {
 
     public static boolean isCheckMove(Move move) {
         // TODO-check
+        char[] files = {'a','b','c','d','e','f','g','h'};
+        int[] ranks = {1,2,3,4,5,6,7,8};
+        Piece.Color color = Piece.Color.WHITE;
+        if(move.getPiece().getColor().equals(color)){
+            char blackKingFile = PieceSet.getOpponentKingFile(color);
+            int blackKingRank = PieceSet.getOpponentKingRank(color);
+            for(char file : files){
+                for(int rank : ranks){
+                    if (Board.getSquare(file, rank).getCurrentPiece() == null) {
+                        continue;
+                    }
+                    Piece currentPiece = Board.getSquare(file, rank).getCurrentPiece();
+                    if (currentPiece.getColor().equals(color)){
+                        Move check = new Move(file,rank,blackKingFile,blackKingRank);
+                        if(currentPiece.validateMove(check)){
+                            System.out.println("Check");
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+
+        color = Piece.Color.BLACK;
+        if(move.getPiece().getColor().equals(color)){
+            char blackKingFile = PieceSet.getOpponentKingFile(color);
+            int blackKingRank = PieceSet.getOpponentKingRank(color);
+            for(char file : files){
+                for(int rank : ranks){
+                    if (Board.getSquare(file, rank).getCurrentPiece() == null) {
+                        continue;
+                    }
+                    Piece currentPiece = Board.getSquare(file, rank).getCurrentPiece();
+                    if (currentPiece.getColor().equals(color)){
+                        Move check = new Move(file,rank,blackKingFile,blackKingRank);
+                        if(currentPiece.validateMove(check)){
+                            System.out.println("Check");
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+
+
+
         return false;
     }
 
