@@ -63,4 +63,9 @@ public class Move {
         return destinationRank;
     }
 
+    public void evokedSpecialMove() {
+        if (piece.hasSpecialMove()) {
+            piece.evokedSpecialMove();
+        }
+    }
 }

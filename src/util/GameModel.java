@@ -45,6 +45,9 @@ public class GameModel extends Observable {
     private void executeMove(Move move) {
         MoveLogger.addMove(move);
         Board.executeMove(move);
+        if (move.getPiece().hasSpecialMove()) {
+            move.evokedSpecialMove();
+        }
         moveHistoryPanel.printMove(move);
         boardPanel.executeMove(move);
         switchTimer(move);

@@ -62,12 +62,46 @@ public class Board {
             Check following code to implement other pieces
             Highly recommended to use same template!
          */
-        // rooks
+        char[] files = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'};
+
         Iterator<Piece> whiteRooksIterator = PieceSet.getPieces(Piece.Color.WHITE, Piece.Type.ROOK).iterator();
-        Iterator<Piece> blackRooksIterator = PieceSet.getPieces(Piece.Color.BLACK, Piece.Type.ROOK).iterator();
         getSquare('a', 1).setCurrentPiece(whiteRooksIterator.next());
         getSquare('h', 1).setCurrentPiece(whiteRooksIterator.next());
+        Iterator<Piece> blackRooksIterator = PieceSet.getPieces(Piece.Color.BLACK, Piece.Type.ROOK).iterator();
         getSquare('a', 8).setCurrentPiece(blackRooksIterator.next());
         getSquare('h', 8).setCurrentPiece(blackRooksIterator.next());
+
+        Iterator<Piece> whiteKnightsIterator = PieceSet.getPieces(Piece.Color.WHITE, Piece.Type.KNIGHT).iterator();
+        getSquare('b', 1).setCurrentPiece(whiteKnightsIterator.next());
+        getSquare('g', 1).setCurrentPiece(whiteKnightsIterator.next());
+        Iterator<Piece> blackKnightsIterator = PieceSet.getPieces(Piece.Color.BLACK, Piece.Type.KNIGHT).iterator();
+        getSquare('b', 8).setCurrentPiece(blackKnightsIterator.next());
+        getSquare('g', 8).setCurrentPiece(blackKnightsIterator.next());
+
+        Iterator<Piece> whiteBishopsIterator = PieceSet.getPieces(Piece.Color.WHITE, Piece.Type.BISHOP).iterator();
+        getSquare('c', 1).setCurrentPiece(whiteBishopsIterator.next());
+        getSquare('f', 1).setCurrentPiece(whiteBishopsIterator.next());
+        Iterator<Piece> blackBishopsIterator = PieceSet.getPieces(Piece.Color.BLACK, Piece.Type.BISHOP).iterator();
+        getSquare('c', 8).setCurrentPiece(blackBishopsIterator.next());
+        getSquare('f', 8).setCurrentPiece(blackBishopsIterator.next());
+
+        Iterator<Piece> whiteKingIterator = PieceSet.getPieces(Piece.Color.WHITE, Piece.Type.KING).iterator();
+        getSquare('c', 1).setCurrentPiece(whiteKingIterator.next());
+        Iterator<Piece> blackKingIterator = PieceSet.getPieces(Piece.Color.BLACK, Piece.Type.KING).iterator();
+        getSquare('c', 8).setCurrentPiece(blackKingIterator.next());
+
+        Iterator<Piece> whiteQueenIterator = PieceSet.getPieces(Piece.Color.WHITE, Piece.Type.QUEEN).iterator();
+        getSquare('c', 1).setCurrentPiece(whiteQueenIterator.next());
+        Iterator<Piece> blackQueenIterator = PieceSet.getPieces(Piece.Color.BLACK, Piece.Type.QUEEN).iterator();
+        getSquare('c', 8).setCurrentPiece(blackQueenIterator.next());
+
+
+        Iterator<Piece> whitePawnsIterator = PieceSet.getPieces(Piece.Color.WHITE, Piece.Type.PAWN).iterator();
+        Iterator<Piece> blackPawnsIterator = PieceSet.getPieces(Piece.Color.BLACK, Piece.Type.PAWN).iterator();
+
+        for (int i = 0; i < 8; i++) {
+            getSquare(files[i], i + 1).setCurrentPiece(whitePawnsIterator.next());
+            getSquare(files[i], i + 1).setCurrentPiece(blackPawnsIterator.next());
+        }
     }
 }

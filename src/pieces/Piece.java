@@ -18,6 +18,7 @@ public abstract class Piece {
     protected Color color;
     protected Type type;
     protected boolean capture;
+    protected boolean hasSpecialMove;
 
     public Piece(Color color) {
         this.color = color;
@@ -64,9 +65,9 @@ public abstract class Piece {
         return color;
     }
 
-    public Type getType() {
-        return type;
-    }
+    public Type getType() { return type; }
+
+    public boolean hasSpecialMove() { return hasSpecialMove; }
 
     public void setCapture(boolean isCaptured) {
         this.capture = isCaptured;
@@ -75,5 +76,13 @@ public abstract class Piece {
     public boolean getCapture() {
         return this.capture;
     }
+
+    public boolean moveValidateCondition(Move move) {
+        return (move.getCapturedPiece() == null)
+                || (move.getCapturedPiece() != null
+                && !move.getPiece().getColor().equals(move.getCapturedPiece().getColor()));
+    }
+
+    public void evokedSpecialMove() { }
 
 }

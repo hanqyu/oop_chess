@@ -12,9 +12,7 @@ public class Rook extends Piece {
     @Override
     public boolean validateMove(Move move) {
         // executeMove or capture
-        if ((move.getCapturedPiece() == null)
-                || (move.getCapturedPiece() != null
-                    && !move.getPiece().getColor().equals(move.getCapturedPiece().getColor()))) {
+        if (moveValidateCondition(move)) {
             // along file
             if (move.getDestinationFile() == move.getOriginFile()
                     && move.getDestinationRank() != move.getOriginRank()) {
