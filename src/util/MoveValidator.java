@@ -62,59 +62,107 @@ public class MoveValidator {
         return true;
     }
 
+
+    static char attackKingFile;
+    static int attackKingRank;
+    static char defendKingFile;
+    static int defendKingRank;
+    static char[] files = {'a','b','c','d','e','f','g','h'};
+    static int[] ranks = {1,2,3,4,5,6,7,8};
+
     public static boolean isCheckMove(Move move) {
         // TODO-check
-        char[] files = {'a','b','c','d','e','f','g','h'};
-        int[] ranks = {1,2,3,4,5,6,7,8};
-        Piece.Color color = Piece.Color.WHITE;
-        if(move.getPiece().getColor().equals(color)){
-            char blackKingFile = PieceSet.getOpponentKingFile(color);
-            int blackKingRank = PieceSet.getOpponentKingRank(color);
-            for(char file : files){
-                for(int rank : ranks){
-                    if (Board.getSquare(file, rank).getCurrentPiece() == null) {
-                        continue;
+        defendKingFile = PieceSet.getOpponentKingFile(move.getPiece().getColor());
+        defendKingRank = PieceSet.getOpponentKingRank(move.getPiece().getColor());
+        attackKingFile = PieceSet.getOpponentKingFile(Board.getSquare(defendKingFile,defendKingRank).getCurrentPiece().getColor());
+        attackKingRank = PieceSet.getOpponentKingRank(Board.getSquare(defendKingFile,defendKingRank).getCurrentPiece().getColor());
+
+        for(char file : files){
+            for(int rank : ranks){
+                if(Board.getSquare(file,rank).getCurrentPiece()==null){
+                    continue;
+                }
+                if(Board.getSquare(file,rank).getCurrentPiece().getColor().equals(move.getPiece().getColor())){
+                    Piece attackPiece = Board.getSquare(file,rank).getCurrentPiece();
+                    if(attackPiece.validateMove(new Move(file, rank, defendKingFile, defendKingRank))){
+                        return true;
                     }
-                    Piece currentPiece = Board.getSquare(file, rank).getCurrentPiece();
-                    if (currentPiece.getColor().equals(color)){
-                        Move check = new Move(file,rank,blackKingFile,blackKingRank);
-                        if(currentPiece.validateMove(check)){
-                            System.out.println("Check");
-                            return true;
-                        }
+                }
+                //자살 CHECK. 이동 불가!
+                if(!Board.getSquare(file,rank).getCurrentPiece().getColor().equals(move.getPiece().getColor())){
+                    Piece defendPiece = Board.getSquare(file,rank).getCurrentPiece();
+                    if(defendPiece.validateMove(new Move(file, rank, attackKingFile, attackKingRank))){
+                        return false;
                     }
                 }
             }
         }
-
-        color = Piece.Color.BLACK;
-        if(move.getPiece().getColor().equals(color)){
-            char blackKingFile = PieceSet.getOpponentKingFile(color);
-            int blackKingRank = PieceSet.getOpponentKingRank(color);
-            for(char file : files){
-                for(int rank : ranks){
-                    if (Board.getSquare(file, rank).getCurrentPiece() == null) {
-                        continue;
-                    }
-                    Piece currentPiece = Board.getSquare(file, rank).getCurrentPiece();
-                    if (currentPiece.getColor().equals(color)){
-                        Move check = new Move(file,rank,blackKingFile,blackKingRank);
-                        if(currentPiece.validateMove(check)){
-                            System.out.println("Check");
-                            return true;
-                        }
-                    }
-                }
-            }
-        }
-
-
-
         return false;
+    }
+
+    public static boolean isDefendSuccess(Move move){
+        for(char file : files){
+            for(int rank : ranks){
+                if(Board.getSquare(file,rank).getCurrentPiece()==null){
+                    continue;
+                }
+                if(Board.getSquare(file,rank).getCurrentPiece().getColor()!=move.getPiece().getColor()){
+                    if(Board.getSquare(file,rank).getCurrentPiece().validateMove(new Move(file,rank,defendKingFile,defendKingRank))){
+                        return false;
+                    } else { continue; }
+                }
+            }
+        }
+        return true;
     }
 
     public static boolean isCheckMate(Move move) {
         // TODO-check
+        defendKingFile = PieceSet.getOpponentKingFile(move.getPiece().getColor());
+        defendKingRank = PieceSet.getOpponentKingRank(move.getPiece().getColor());
+        attackKingFile = PieceSet.getOpponentKingFile(Board.getSquare(defendKingFile,defendKingRank).getCurrentPiece().getColor());
+        attackKingRank = PieceSet.getOpponentKingRank(Board.getSquare(defendKingFile,defendKingRank).getCurrentPiece().getColor());
+        Move defendMove;
+        Piece opponentPiece;
+
+        for(char file : files){
+            for(int rank : ranks){
+                if(Board.getSquare(file,rank).getCurrentPiece()==null){
+                    continue;
+                }
+                if(!Board.getSquare(file,rank).getCurrentPiece().getColor().equals(move.getPiece().getColor())){
+                    Piece defendPiece = Board.getSquare(file,rank).getCurrentPiece();
+                    for(char defFile : files){
+                        for(int defRank : ranks){
+                            if(defendPiece.validateMove(new Move(file,rank,defFile,defRank))){
+                                defendMove = new Move(defendPiece,file,rank,defFile,defRank);
+                                if(Board.getSquare(defFile,defRank).getCurrentPiece()==null){
+                                    Board.getSquare(defFile,defRank).setCurrentPiece(defendPiece);
+                                    Board.getSquare(file,rank).setCurrentPiece(null);
+                                    if(isDefendSuccess(defendMove)){
+                                        return true;
+                                    }
+                                    Board.getSquare(file,rank).setCurrentPiece(defendPiece);
+                                    Board.getSquare(defFile,defRank).setCurrentPiece(null);
+                                    continue;
+                                }
+                                if(Board.getSquare(defFile,defRank).getCurrentPiece().getColor()!=defendPiece.getColor()){
+                                    opponentPiece = Board.getSquare(defFile,defRank).getCurrentPiece();
+                                    Board.getSquare(defFile,defRank).setCurrentPiece(defendPiece);
+                                    Board.getSquare(file,rank).setCurrentPiece(opponentPiece);
+                                    if(isDefendSuccess(defendMove)){
+                                        return true;
+                                    }
+                                    Board.getSquare(file,rank).setCurrentPiece(defendPiece);
+                                    Board.getSquare(defFile,defRank).setCurrentPiece(opponentPiece);
+                                    continue;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
         return false;
     }
 
