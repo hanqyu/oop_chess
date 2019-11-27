@@ -1,8 +1,10 @@
 package util;
 
 import board.Board;
+import board.Square;
 import pieces.Piece;
 import pieces.PieceSet;
+import ui.BoardPanel;
 
 
 public class MoveValidator {
@@ -85,35 +87,23 @@ public class MoveValidator {
                 if(Board.getSquare(file,rank).getCurrentPiece().getColor().equals(move.getPiece().getColor())){
                     Piece attackPiece = Board.getSquare(file,rank).getCurrentPiece();
                     if(attackPiece.validateMove(new Move(file, rank, defendKingFile, defendKingRank))){
-                        return true;
+                        if(validateClearPath(new Move(file, rank, defendKingFile, defendKingRank))){  // 방어자의 King에 이르는 길 사이에 아무것도 없는가?
+                            return true;
+                        }
                     }
                 }
                 //자살 CHECK. 이동 불가! return값도 false!
                 if(!Board.getSquare(file,rank).getCurrentPiece().getColor().equals(move.getPiece().getColor())){
                     Piece defendPiece = Board.getSquare(file,rank).getCurrentPiece();
                     if(defendPiece.validateMove(new Move(file, rank, attackKingFile, attackKingRank))){
-                        return false;
+                        if(validateClearPath(new Move(file, rank, defendKingFile, defendKingRank))){  // 방어자의 King에 이르는 길 사이에 아무것도 없는가?
+                            return false;
+                        }
                     }
                 }
             }
         }
         return false;
-    }
-
-    public static boolean isDefendSuccess(Move move){
-        for(char file : files){
-            for(int rank : ranks){
-                if(Board.getSquare(file,rank).getCurrentPiece()==null){
-                    continue;
-                }
-                if(Board.getSquare(file,rank).getCurrentPiece().getColor()!=move.getPiece().getColor()){
-                    if(Board.getSquare(file,rank).getCurrentPiece().validateMove(new Move(file,rank,defendKingFile,defendKingRank))){
-                        return false;
-                    } else { continue; }
-                }
-            }
-        }
-        return true;
     }
 
     public static boolean isCheckMate(Move move) {
@@ -206,8 +196,10 @@ public class MoveValidator {
                 if(Board.getSquare(file,rank).getCurrentPiece()!=null
                         &&Board.getSquare(file,rank).getCurrentPiece().getColor().equals(attackColor)){ // 다시 공격자의 기물을 하나씩 탐색
                     if(Board.getSquare(file,rank).getCurrentPiece().validateMove(new Move(file,rank,defendKingFile,defendKingRank))){ // 만약 하나의 기물이라도 방어자의 King을 잡을 수 있다면?
-                        System.out.println("But "+Board.getSquare(file,rank).getCurrentPiece().toString()+" got the King");
-                        return false;                                                                                                 // false
+                        if(validateClearPath(new Move(file, rank, defendKingFile, defendKingRank))){  // 또한 방어자의 King 에게 다다르는 길이 Clear 하다면?
+                            System.out.println("But "+Board.getSquare(file,rank).getCurrentPiece().toString()+" got the King");  // false
+                            return false;
+                        }
                     }
                 }
             }
@@ -217,7 +209,59 @@ public class MoveValidator {
 
     private static boolean validateClearPath(Move move) {
         // TODO-movement
+        int blockPiece = 0;
+        if(Math.abs(move.getDestinationFile() - move.getOriginFile()) == 1 || Math.abs(move.getDestinationRank() - move.getOriginRank()) == 1){  // 한칸씩만 움직이는 경우 당연히 true
+            return true;
+        }
+
+        if((move.getDestinationFile()==move.getOriginFile()) && Math.abs(move.getDestinationRank()-move.getOriginRank()) > 1){  // Rank 를 따라 움직이는 경우
+            for(int i = 1; Math.min(move.getDestinationRank(), move.getOriginRank()) + i < Math.max(move.getDestinationRank(),move.getOriginRank()); i++){
+                if(Board.getSquare(move.getOriginFile(), Math.min(move.getDestinationRank(), move.getOriginRank()) + i).getCurrentPiece() != null){
+                    blockPiece++;
+                }
+            }
+            if(blockPiece>0){
+                return false;
+            }
+            return true;
+        }
+        if((move.getDestinationRank()==move.getOriginRank()) && Math.abs(move.getDestinationFile()-move.getOriginFile()) > 1){  // File 을 따라 움직이는 경우
+            for(int i = 1; Math.min(move.getDestinationFile(), move.getOriginFile()) + i < Math.max(move.getDestinationFile(),move.getOriginFile()); i++){
+                if(Board.getSquare((char)(Math.min(move.getDestinationFile(), move.getOriginFile()) + i), move.getOriginRank()).getCurrentPiece() != null){
+                    blockPiece++;
+                }
+            }
+            if(blockPiece>0){
+                return false;
+            }
+            return true;
+        }
+        if(Math.abs(move.getDestinationFile()-move.getOriginFile()) == Math.abs(move.getDestinationRank()-move.getOriginRank())){  // 대각선으로 움직이는 경우
+            if ((move.getDestinationFile()-move.getOriginFile())*(move.getDestinationRank()-move.getOriginRank()) > 0) {  // 우상향, 좌하향 움직임인 경우
+                for(int i = 1; Math.min(move.getDestinationRank(), move.getOriginRank()) + i < Math.max(move.getDestinationRank(),move.getOriginRank()); i++){
+                    if(Board.getSquare((char)(Math.min(move.getDestinationFile(), move.getOriginFile()) + i), Math.min(move.getDestinationRank(), move.getOriginRank()) + i).getCurrentPiece() != null){
+                        blockPiece++;
+                    }
+                }
+                if(blockPiece>0){
+                    return false;
+                }
+                return true;
+            }
+            if ((move.getDestinationFile()-move.getOriginFile())*(move.getDestinationRank()-move.getOriginRank()) < 0) {  // 우하향, 좌상향 움직임인 경우
+                for(int i = 1; Math.min(move.getDestinationRank(), move.getOriginRank()) + i < Math.max(move.getDestinationRank(),move.getOriginRank()); i++){
+                    if(Board.getSquare((char)(Math.max(move.getDestinationFile(), move.getOriginFile()) - i), Math.min(move.getDestinationRank(), move.getOriginRank()) + i).getCurrentPiece() != null){
+                        blockPiece++;
+                    }
+                }
+                if(blockPiece>0){
+                    return false;
+                }
+                return true;
+            }
+        }
         return false;
     }
+
 
 }
