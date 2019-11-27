@@ -17,6 +17,8 @@ public abstract class Piece {
 
     protected Color color;
     protected Type type;
+    protected int doubleMoveRank;
+    protected int rankDifferenceForPawn;
     protected boolean capture;
     protected boolean hasSpecialMove;
 

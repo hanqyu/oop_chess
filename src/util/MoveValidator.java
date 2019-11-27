@@ -4,7 +4,6 @@ import board.Board;
 import pieces.Piece;
 import pieces.PieceSet;
 
-import java.util.List;
 
 public class MoveValidator {
 
