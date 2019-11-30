@@ -4,6 +4,8 @@ import util.GameModel;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.sql.Time;
 import java.util.Observable;
 import java.util.Observer;
@@ -46,10 +48,20 @@ public class TimerPanel extends JPanel implements Observer {
             Show whiteTimerStatusPanel
             Blind blackTimerStatusPanel
          */
+        whiteTime.setTime(whiteTime.getTime() + 1000);
+        whiteTimerDigitsLabel.setText(whiteTime.toString());
+        whiteTimerDigitsLabel.setFont(whiteTimerDigitsLabel.getFont().deriveFont(48f));
+        whiteTimerStatusPanel.setVisible(true);
+        blackTimerStatusPanel.setVisible(false);
     }
 
     public void blackTimerTikTok() {
         // TODO-timer: same with whiteTimerTikTok
+        blackTime.setTime(blackTime.getTime() + 1000);
+        blackTimerDigitsLabel.setText(blackTime.toString());
+        blackTimerDigitsLabel.setFont(blackTimerDigitsLabel.getFont().deriveFont(48f));
+        blackTimerStatusPanel.setVisible(true);
+        whiteTimerStatusPanel.setVisible(false);
     }
 
     private void initialize() {

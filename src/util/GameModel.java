@@ -20,6 +20,8 @@ public class GameModel extends Observable {
     private Timer whiteTimer;
     private Timer blackTimer;
 
+    private Timer currentTimer = whiteTimer;
+
     public GameModel() {
         initialize();
     }
@@ -37,7 +39,6 @@ public class GameModel extends Observable {
         Move move = new Move(originFile, originRank, destinationFile, destinationRank);
         Move castlingKing = new Move(Board.getSquare(originFile, originRank).getCurrentPiece(),originFile, originRank, destinationFile, destinationRank);
         Move castlingRook = null;
-        System.out.println("You're now moving "+castlingKing.getPiece().toString()+" that everMoved = "+castlingKing.getPiece().getEverMoved());
         if (MoveValidator.validateMove(move)) {
             if(MoveValidator.isValidCastling(castlingKing)){
                 if(castlingKing.getDestinationFile()=='c' && castlingKing.getDestinationRank()==1){
@@ -126,10 +127,21 @@ public class GameModel extends Observable {
         TODO-timer
             start and stop whiteTimer and blackTimer
          */
+        if (currentTimer == whiteTimer) {
+            whiteTimer.stop();
+            blackTimer.start();
+            currentTimer = blackTimer;
+        } else {
+            whiteTimer.start();
+            blackTimer.stop();
+            currentTimer = whiteTimer;
+        }
     }
 
     private void stopTimer() {
         // TODO-timer: stop timers
+        whiteTimer.stop();
+        blackTimer.stop();
     }
 
     public BoardPanel getBoardPanel() {
