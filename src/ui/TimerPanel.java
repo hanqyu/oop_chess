@@ -11,6 +11,8 @@ import java.sql.Time;
 import java.util.Observable;
 import java.util.Observer;
 
+import static util.Preferences.TimerMode.COUNTDOWN;
+
 public class TimerPanel extends JPanel implements Observer {
 
     private GameModel gameModel;
@@ -27,11 +29,23 @@ public class TimerPanel extends JPanel implements Observer {
     private JLabel blackTimerDigitsLabel;
     private JPanel blackTimerStatusPanel;
 
+    private boolean isCountDownMode = Core.getPreferences().getTimerMode().equals(COUNTDOWN);
+
     public TimerPanel(GameModel gameModel) {
         super(new BorderLayout());
         this.gameModel = gameModel;
-        whiteTime = Time.valueOf("00:00:00");
-        blackTime = Time.valueOf("00:00:00");
+
+        if (isCountDownMode) {
+            Integer minute = Core.getPreferences().getTimeLimit();
+            Integer hour = (minute / 60) % 100;  // ignore more than 100
+            String timeLimit = hour.toString() + ":" + minute + ":00";
+            whiteTime = Time.valueOf(timeLimit);
+            blackTime = Time.valueOf(timeLimit);
+        } else {
+            whiteTime = Time.valueOf("00:00:00");
+            blackTime = Time.valueOf("00:00:00");
+        }
+
         initialize();
         gameModel.addObserver(this);
     }
@@ -41,7 +55,7 @@ public class TimerPanel extends JPanel implements Observer {
 
     }
 
-    public void whiteTimerTikTok() {
+    public Time whiteTimerTikTok() {
         /*
         TODO-timer
             Update whiteTime
@@ -49,18 +63,24 @@ public class TimerPanel extends JPanel implements Observer {
             Show whiteTimerStatusPanel
             Blind blackTimerStatusPanel
          */
-        whiteTime.setTime(whiteTime.getTime() + 1000);
+        whiteTime.setTime(whiteTime.getTime() + (isCountDownMode ? -1000 : 1000));
+
         whiteTimerDigitsLabel.setText(whiteTime.toString());
         whiteTimerStatusPanel.setVisible(true);
         blackTimerStatusPanel.setVisible(false);
+
+        return whiteTime;
     }
 
-    public void blackTimerTikTok() {
+    public Time blackTimerTikTok() {
         // TODO-timer: same with whiteTimerTikTok
-        blackTime.setTime(blackTime.getTime() + 1000);
+        blackTime.setTime(blackTime.getTime() + (isCountDownMode ? -1000 : 1000));
+
         blackTimerDigitsLabel.setText(blackTime.toString());
         blackTimerStatusPanel.setVisible(true);
         whiteTimerStatusPanel.setVisible(false);
+
+        return blackTime;
     }
 
     private void initialize() {

@@ -56,6 +56,11 @@ public class GameFrame extends JFrame implements Observer{
         JOptionPane.showMessageDialog(this, "That's a Checkmate!", "Checkmate", JOptionPane.WARNING_MESSAGE);
     }
 
+    public void showTimeOutDialog(String color) {
+        JOptionPane.showMessageDialog(this, "Time Out!\n" + color + " lose.\n\n(Close the game when pressed OK)", "Time Out", JOptionPane.YES_NO_OPTION);
+        exit(0);
+
+    }
     private void loadInterface() {
         initializeMenuBar();
         initializePanels();

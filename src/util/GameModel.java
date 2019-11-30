@@ -7,6 +7,7 @@ import ui.*;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.Time;
 import java.util.Observable;
 
 public class GameModel extends Observable {
@@ -109,13 +110,24 @@ public class GameModel extends Observable {
         whiteTimer = new Timer(1000, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                timerPanel.whiteTimerTikTok();
+                Time time = timerPanel.whiteTimerTikTok();
+
+                if (Integer.parseInt(time.toString().replace(":","")) <= 0) {
+                    stopTimer();
+                    gameFrame.showTimeOutDialog("White");
+                    boardPanel.setEnabled(false);
+                }
             }
         });
         blackTimer = new Timer(1000, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                timerPanel.blackTimerTikTok();
+                Time time = timerPanel.blackTimerTikTok();
+                if (Integer.parseInt(time.toString().replace(":","")) <= 0) {
+                    stopTimer();
+                    gameFrame.showTimeOutDialog("Black");
+                    boardPanel.setEnabled(false);
+                }
             }
         });
     }

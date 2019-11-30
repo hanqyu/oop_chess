@@ -215,7 +215,7 @@ public class PreferencesFrame extends JFrame {
         // timer settings
         timerModeLabel = new JLabel("Timer Mode: ");
         countdownRadioButton = new JRadioButton("Countdown");
-        countdownRadioButton.setEnabled(false);
+        countdownRadioButton.setEnabled(true);
         countdownRadioButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
