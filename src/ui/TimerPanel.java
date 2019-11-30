@@ -1,5 +1,6 @@
 package ui;
 
+import util.Core;
 import util.GameModel;
 
 import javax.swing.*;
@@ -86,8 +87,14 @@ public class TimerPanel extends JPanel implements Observer {
         blackTimerPanel.setBorder(BorderFactory.createTitledBorder("Black"));
 
         displayPanel = new JPanel(new GridLayout(2, 1));
-        displayPanel.add(whiteTimerPanel);
-        displayPanel.add(blackTimerPanel);
+
+        if (Core.getPreferences().isBoardReversed()) {
+            displayPanel.add(whiteTimerPanel);
+            displayPanel.add(blackTimerPanel);
+        } else {
+            displayPanel.add(whiteTimerPanel);
+            displayPanel.add(blackTimerPanel);
+        }
 
         this.add(displayPanel, BorderLayout.CENTER);
         this.setPreferredSize(new Dimension(300, 200));

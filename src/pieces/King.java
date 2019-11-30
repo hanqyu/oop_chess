@@ -4,8 +4,6 @@ import util.Move;
 
 public class King extends Piece {
 
-    private boolean everMoved;
-
     public King(Color color) {
         super(color);
         this.type = Type.KING;
@@ -16,7 +14,7 @@ public class King extends Piece {
     @Override
     public boolean validateMove(Move move) {
         // TODO King validateMove
-        if (moveValidateCondition(move)) {
+        if (moveValidateCondition(move)) {  // TODO-ValidateCondition을 사용하지 않아야 castling이 가능할 듯
             return Math.abs(move.getDestinationRank() - move.getOriginRank())
                     * Math.abs(move.getDestinationFile() - move.getOriginFile()) == 1;
         }
@@ -24,12 +22,8 @@ public class King extends Piece {
         return false;
     }
 
-    public boolean everMoved() {
-        return everMoved;
-    }
-
-    public boolean setEverMoved(boolean condition) {
-        return everMoved = condition;
+    public boolean setEverMoved(boolean bool) {
+        return everMoved = bool;
     }
 
     @Override

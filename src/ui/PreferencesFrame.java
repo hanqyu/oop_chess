@@ -208,7 +208,7 @@ public class PreferencesFrame extends JFrame {
 
         // reverse board
         reverseBoardCheckBox = new JCheckBox("Reverse Board");
-        reverseBoardCheckBox.setEnabled(false);
+        reverseBoardCheckBox.setEnabled(true);
         reverseBoardPanel = new JPanel(new BorderLayout());
         reverseBoardPanel.add(reverseBoardCheckBox, BorderLayout.WEST);
 
