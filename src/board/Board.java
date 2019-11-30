@@ -62,7 +62,7 @@ public class Board {
             Check following code to implement other pieces
             Highly recommended to use same template!
          */
-        char[] files = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'};
+
 
         Iterator<Piece> whiteRooksIterator = PieceSet.getPieces(Piece.Color.WHITE, Piece.Type.ROOK).iterator();
         getSquare('a', 1).setCurrentPiece(whiteRooksIterator.next());
@@ -86,22 +86,24 @@ public class Board {
         getSquare('f', 8).setCurrentPiece(blackBishopsIterator.next());
 
         Iterator<Piece> whiteKingIterator = PieceSet.getPieces(Piece.Color.WHITE, Piece.Type.KING).iterator();
-        getSquare('c', 1).setCurrentPiece(whiteKingIterator.next());
+        getSquare('e', 1).setCurrentPiece(whiteKingIterator.next());
         Iterator<Piece> blackKingIterator = PieceSet.getPieces(Piece.Color.BLACK, Piece.Type.KING).iterator();
-        getSquare('c', 8).setCurrentPiece(blackKingIterator.next());
+        getSquare('e', 8).setCurrentPiece(blackKingIterator.next());
 
         Iterator<Piece> whiteQueenIterator = PieceSet.getPieces(Piece.Color.WHITE, Piece.Type.QUEEN).iterator();
-        getSquare('c', 1).setCurrentPiece(whiteQueenIterator.next());
+        getSquare('d', 1).setCurrentPiece(whiteQueenIterator.next());
         Iterator<Piece> blackQueenIterator = PieceSet.getPieces(Piece.Color.BLACK, Piece.Type.QUEEN).iterator();
-        getSquare('c', 8).setCurrentPiece(blackQueenIterator.next());
+        getSquare('d', 8).setCurrentPiece(blackQueenIterator.next());
 
 
         Iterator<Piece> whitePawnsIterator = PieceSet.getPieces(Piece.Color.WHITE, Piece.Type.PAWN).iterator();
         Iterator<Piece> blackPawnsIterator = PieceSet.getPieces(Piece.Color.BLACK, Piece.Type.PAWN).iterator();
 
+        char[] files = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'};
+
         for (int i = 0; i < 8; i++) {
-            getSquare(files[i], i + 1).setCurrentPiece(whitePawnsIterator.next());
-            getSquare(files[i], i + 1).setCurrentPiece(blackPawnsIterator.next());
+            getSquare(files[i], 2).setCurrentPiece(whitePawnsIterator.next());
+            getSquare(files[i], 7).setCurrentPiece(blackPawnsIterator.next());
         }
     }
 }

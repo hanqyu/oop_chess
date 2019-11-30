@@ -17,9 +17,7 @@ public class Pawn extends Piece {
     public boolean validateMove(Move move) {
         // TODO Pawn validateMove
         if (moveValidateCondition(move)) {
-            if (move.getCapturedPiece() != null
-                    && Math.abs(move.getDestinationFile() - move.getOriginFile()) == 1
-                    && isValidForwardRank(move)) {
+            if (isValidForwardRank(move)) {
                 return true;
             }
         }
