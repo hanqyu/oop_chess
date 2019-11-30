@@ -35,8 +35,28 @@ public class GameModel extends Observable {
 
     private void onLocalMoveRequest(char originFile, int originRank, char destinationFile, int destinationRank) {
         Move move = new Move(originFile, originRank, destinationFile, destinationRank);
+        Move castlingKing = new Move(Board.getSquare(originFile, originRank).getCurrentPiece(),originFile, originRank, destinationFile, destinationRank);
+        Move castlingRook = null;
+        System.out.println("You're now moving "+castlingKing.getPiece().toString()+" that everMoved = "+castlingKing.getPiece().getEverMoved());
         if (MoveValidator.validateMove(move)) {
+            if(MoveValidator.isValidCastling(castlingKing)){
+                if(castlingKing.getDestinationFile()=='c' && castlingKing.getDestinationRank()==1){
+                    castlingRook = new Move('a',1,'d',1);
+                }
+                if(castlingKing.getDestinationFile()=='c' && castlingKing.getDestinationRank()==8){
+                    castlingRook = new Move('a',8,'d',8);
+                }
+                if(castlingKing.getDestinationFile()=='g' && castlingKing.getDestinationRank()==1){
+                    castlingRook = new Move('h',1,'f',1);
+                }
+                if(castlingKing.getDestinationFile()=='g' && castlingKing.getDestinationRank()==8){
+                    castlingRook = new Move('h',8,'f',8);
+                }
+                executeCastling(castlingRook);
+                castlingKing = null;
+            }
             executeMove(move);
+            Board.getSquare(move.getDestinationFile(),move.getDestinationRank()).getCurrentPiece().setEverMoved();
         } else {
             //
         }
@@ -51,6 +71,19 @@ public class GameModel extends Observable {
         moveHistoryPanel.printMove(move);
         boardPanel.executeMove(move);
         switchTimer(move);
+        if (MoveValidator.isCheckMove(move)) {
+            if (MoveValidator.isCheckMate(move)) {
+                stopTimer();
+                gameFrame.showCheckmateDialog();
+            } else {
+                gameFrame.showCheckDialog();
+            }
+        }
+    }
+
+    private void executeCastling(Move move){
+        Board.executeMove(move);
+        boardPanel.executeMove(move);
         if (MoveValidator.isCheckMove(move)) {
             if (MoveValidator.isCheckMate(move)) {
                 stopTimer();
