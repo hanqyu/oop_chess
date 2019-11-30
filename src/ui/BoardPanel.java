@@ -35,6 +35,13 @@ public class BoardPanel extends JPanel implements Observer {
     }
 
     public void submitMoveRequest(char originFile, int originRank, char destinationFile, int destinationRank) {
+
+        try {
+            getSquarePanel(originFile, originRank).getComponent(0);
+        } catch (ArrayIndexOutOfBoundsException e) {
+            return;
+        }
+
         if (getSquarePanel(originFile, originRank).getComponent(0) != null) {
             getSquarePanel(originFile, originRank).getComponent(0).setVisible(true);
             gameModel.onMoveRequest(originFile, originRank, destinationFile, destinationRank);
@@ -63,16 +70,24 @@ public class BoardPanel extends JPanel implements Observer {
     }
 
     public void executeDrag(int dragX, int dragY) {
-        JLabel draggedPieceImageLabel = (JLabel) boardLayeredPane.getComponentsInLayer(JLayeredPane.DRAG_LAYER)[0];
-        if (draggedPieceImageLabel != null) {
-            draggedPieceImageLabel.setLocation(dragX, dragY);
+        try {
+            JLabel draggedPieceImageLabel = (JLabel) boardLayeredPane.getComponentsInLayer(JLayeredPane.DRAG_LAYER)[0];
+            if (draggedPieceImageLabel != null) {
+                draggedPieceImageLabel.setLocation(dragX, dragY);
+            }
+        } catch (ArrayIndexOutOfBoundsException e) {
+            return;
         }
     }
 
     public void postDrag() {
-        JLabel draggedPieceImageLabel = (JLabel) boardLayeredPane.getComponentsInLayer(JLayeredPane.DRAG_LAYER)[0];
-        boardLayeredPane.remove(draggedPieceImageLabel);
-        boardLayeredPane.repaint();
+        try {
+            JLabel draggedPieceImageLabel = (JLabel) boardLayeredPane.getComponentsInLayer(JLayeredPane.DRAG_LAYER)[0];
+            boardLayeredPane.remove(draggedPieceImageLabel);
+            boardLayeredPane.repaint();
+        } catch (ArrayIndexOutOfBoundsException e) {
+            return;
+        }
     }
 
     public JPanel getSquarePanel(char file, int rank) {
