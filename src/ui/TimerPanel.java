@@ -50,7 +50,6 @@ public class TimerPanel extends JPanel implements Observer {
          */
         whiteTime.setTime(whiteTime.getTime() + 1000);
         whiteTimerDigitsLabel.setText(whiteTime.toString());
-        whiteTimerDigitsLabel.setFont(whiteTimerDigitsLabel.getFont().deriveFont(48f));
         whiteTimerStatusPanel.setVisible(true);
         blackTimerStatusPanel.setVisible(false);
     }
@@ -59,7 +58,6 @@ public class TimerPanel extends JPanel implements Observer {
         // TODO-timer: same with whiteTimerTikTok
         blackTime.setTime(blackTime.getTime() + 1000);
         blackTimerDigitsLabel.setText(blackTime.toString());
-        blackTimerDigitsLabel.setFont(blackTimerDigitsLabel.getFont().deriveFont(48f));
         blackTimerStatusPanel.setVisible(true);
         whiteTimerStatusPanel.setVisible(false);
     }
