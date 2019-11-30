@@ -20,8 +20,6 @@ public class GameModel extends Observable {
     private Timer whiteTimer;
     private Timer blackTimer;
 
-    private Timer currentTimer = whiteTimer;
-
     public GameModel() {
         initialize();
     }
@@ -37,27 +35,27 @@ public class GameModel extends Observable {
 
     private void onLocalMoveRequest(char originFile, int originRank, char destinationFile, int destinationRank) {
         Move move = new Move(originFile, originRank, destinationFile, destinationRank);
-        Move castlingKing = new Move(Board.getSquare(originFile, originRank).getCurrentPiece(),originFile, originRank, destinationFile, destinationRank);
+        Move castlingKing = new Move(Board.getSquare(originFile, originRank).getCurrentPiece(), originFile, originRank, destinationFile, destinationRank);
         Move castlingRook = null;
         if (MoveValidator.validateMove(move)) {
-            if(MoveValidator.isValidCastling(castlingKing)){
-                if(castlingKing.getDestinationFile()=='c' && castlingKing.getDestinationRank()==1){
-                    castlingRook = new Move('a',1,'d',1);
+            if (MoveValidator.isValidCastling(castlingKing)) {
+                if (castlingKing.getDestinationFile() == 'c' && castlingKing.getDestinationRank() == 1) {
+                    castlingRook = new Move('a', 1, 'd', 1);
                 }
-                if(castlingKing.getDestinationFile()=='c' && castlingKing.getDestinationRank()==8){
-                    castlingRook = new Move('a',8,'d',8);
+                if (castlingKing.getDestinationFile() == 'c' && castlingKing.getDestinationRank() == 8) {
+                    castlingRook = new Move('a', 8, 'd', 8);
                 }
-                if(castlingKing.getDestinationFile()=='g' && castlingKing.getDestinationRank()==1){
-                    castlingRook = new Move('h',1,'f',1);
+                if (castlingKing.getDestinationFile() == 'g' && castlingKing.getDestinationRank() == 1) {
+                    castlingRook = new Move('h', 1, 'f', 1);
                 }
-                if(castlingKing.getDestinationFile()=='g' && castlingKing.getDestinationRank()==8){
-                    castlingRook = new Move('h',8,'f',8);
+                if (castlingKing.getDestinationFile() == 'g' && castlingKing.getDestinationRank() == 8) {
+                    castlingRook = new Move('h', 8, 'f', 8);
                 }
                 executeCastling(castlingRook);
                 castlingKing = null;
             }
             executeMove(move);
-            Board.getSquare(move.getDestinationFile(),move.getDestinationRank()).getCurrentPiece().setEverMoved();
+            Board.getSquare(move.getDestinationFile(), move.getDestinationRank()).getCurrentPiece().setEverMoved();
         } else {
             //
         }
@@ -82,7 +80,7 @@ public class GameModel extends Observable {
         }
     }
 
-    private void executeCastling(Move move){
+    private void executeCastling(Move move) {
         Board.executeMove(move);
         boardPanel.executeMove(move);
         if (MoveValidator.isCheckMove(move)) {
@@ -127,14 +125,13 @@ public class GameModel extends Observable {
         TODO-timer
             start and stop whiteTimer and blackTimer
          */
-        if (currentTimer == whiteTimer) {
+
+        if (move.getPiece().getColor().equals(Piece.Color.WHITE)) {
             whiteTimer.stop();
             blackTimer.start();
-            currentTimer = blackTimer;
         } else {
             whiteTimer.start();
             blackTimer.stop();
-            currentTimer = whiteTimer;
         }
     }
 
