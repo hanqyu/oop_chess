@@ -12,7 +12,7 @@ import java.util.Observer;
 
 import static java.lang.System.exit;
 
-public class GameFrame extends JFrame implements Observer{
+public class GameFrame extends JFrame implements Observer {
 
     private GameModel gameModel;
 
@@ -57,10 +57,11 @@ public class GameFrame extends JFrame implements Observer{
     }
 
     public void showTimeOutDialog(String color) {
-        JOptionPane.showMessageDialog(this, "Time Out!\n" + color + " lose.\n\n(Close the game when pressed OK)", "Time Out", JOptionPane.YES_NO_OPTION);
+        JOptionPane.showMessageDialog(this, "Time Out!\n" + color + " lose.\n\n(Close the game when pressed OK)", "Time Out", JOptionPane.WARNING_MESSAGE);
         exit(0);
 
     }
+
     private void loadInterface() {
         initializeMenuBar();
         initializePanels();
