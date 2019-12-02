@@ -112,8 +112,8 @@ public class TimerPanel extends JPanel implements Observer {
             displayPanel.add(whiteTimerPanel);
             displayPanel.add(blackTimerPanel);
         } else {
-            displayPanel.add(whiteTimerPanel);
             displayPanel.add(blackTimerPanel);
+            displayPanel.add(whiteTimerPanel);
         }
 
         this.add(displayPanel, BorderLayout.CENTER);
