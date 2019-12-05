@@ -2,7 +2,6 @@ package util;
 
 import board.Board;
 import pieces.Piece;
-import pieces.PieceSet;
 
 
 public class MoveValidator {
@@ -15,6 +14,14 @@ public class MoveValidator {
 
     private MoveValidator() {
         currentMoveColor = Piece.Color.WHITE;
+    }
+
+    public static void initialize(GameStatus gameStatus) {
+        if (gameStatus != null) {
+            currentMoveColor = gameStatus.getTurn();
+        } else {
+            currentMoveColor = Piece.Color.WHITE;
+        }
     }
 
     private static Piece.Color currentMoveColor;

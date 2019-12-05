@@ -29,6 +29,7 @@ public class GameModel extends Observable {
     public GameModel(GameStatus gameStatus) {
         this.gameStatus = gameStatus;
         Board.initialize(gameStatus);
+        MoveValidator.initialize(gameStatus);
         initialize();
     }
 
@@ -106,12 +107,8 @@ public class GameModel extends Observable {
     }
 
     private void initializeUIComponents() {
-        boardPanel = new BoardPanel(this);
-        if (gameStatus == null) {
-            timerPanel = new TimerPanel(this);
-        } else {
-            timerPanel = new TimerPanel(this, gameStatus);
-        }
+        boardPanel = new BoardPanel(this, gameStatus);
+        timerPanel = new TimerPanel(this, gameStatus);
         controlPanel = new ControlPanel(this);
         moveHistoryPanel = new MoveHistoryPanel(this);
         gameFrame = new GameFrame(this);
@@ -183,4 +180,6 @@ public class GameModel extends Observable {
     public GameStatus getGameStatus() {
         return gameStatus;
     }
+
+    public GameFrame getGameFrame() { return gameFrame; }
 }
