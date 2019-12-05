@@ -42,7 +42,7 @@ public class TimerPanel extends JPanel implements Observer {
         if (isCountDownMode) {
             Integer minute = Core.getPreferences().getTimeLimit();
             Integer hour = (minute / 60) % 100;  // ignore more than 100
-            String timeLimit = hour.toString() + ":" + minute + ":00";
+            String timeLimit = String.format("%02d", hour) + ":" + String.format("%02d", minute % 60) + ":00";
             whiteTime = Time.valueOf(timeLimit);
             blackTime = Time.valueOf(timeLimit);
         } else {
