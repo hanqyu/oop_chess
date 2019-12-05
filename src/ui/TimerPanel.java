@@ -1,7 +1,9 @@
 package ui;
 
+import pieces.Piece;
 import util.Core;
 import util.GameModel;
+import util.GameStatus;
 
 import javax.swing.*;
 import java.awt.*;
@@ -29,11 +31,13 @@ public class TimerPanel extends JPanel implements Observer {
     private JLabel blackTimerDigitsLabel;
     private JPanel blackTimerStatusPanel;
 
-    private boolean isCountDownMode = Core.getPreferences().getTimerMode().equals(COUNTDOWN);
+    private boolean isCountDownMode;
 
     public TimerPanel(GameModel gameModel) {
         super(new BorderLayout());
         this.gameModel = gameModel;
+
+        isCountDownMode = Core.getPreferences().getTimerMode().equals(COUNTDOWN);
 
         if (isCountDownMode) {
             Integer minute = Core.getPreferences().getTimeLimit();
@@ -41,6 +45,24 @@ public class TimerPanel extends JPanel implements Observer {
             String timeLimit = hour.toString() + ":" + minute + ":00";
             whiteTime = Time.valueOf(timeLimit);
             blackTime = Time.valueOf(timeLimit);
+        } else {
+            whiteTime = Time.valueOf("00:00:00");
+            blackTime = Time.valueOf("00:00:00");
+        }
+
+        initialize();
+        gameModel.addObserver(this);
+    }
+
+    public TimerPanel(GameModel gameModel, GameStatus gameStatus) {
+        super(new BorderLayout());
+        this.gameModel = gameModel;
+
+        isCountDownMode = gameStatus.getTimerMode().equals(COUNTDOWN);
+
+        if (isCountDownMode) {
+            whiteTime = Time.valueOf(gameStatus.getWhiteTime().getTime());
+            blackTime = Time.valueOf(gameStatus.getBlackTime().getTime());
         } else {
             whiteTime = Time.valueOf("00:00:00");
             blackTime = Time.valueOf("00:00:00");
@@ -118,6 +140,14 @@ public class TimerPanel extends JPanel implements Observer {
 
         this.add(displayPanel, BorderLayout.CENTER);
         this.setPreferredSize(new Dimension(300, 200));
+    }
+
+    public Time getWhiteTime() {
+        return whiteTime;
+    }
+
+    public Time getBlackTime() {
+        return blackTime;
     }
 
 }

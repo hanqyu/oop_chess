@@ -2,6 +2,7 @@ package board;
 
 import pieces.*;
 import util.Core;
+import util.GameStatus;
 import util.Move;
 
 import java.util.Iterator;
@@ -25,6 +26,11 @@ public class Board {
     public static void initialize() {
         initializeSquares();
         initializePieces();
+    }
+
+    public static void initialize(GameStatus gameStatus) {
+        initializeSquares();
+        initializePieces(gameStatus);
     }
 
     public static Square getSquare(char file, int rank) {
@@ -62,7 +68,6 @@ public class Board {
             Check following code to implement other pieces
             Highly recommended to use same template!
          */
-
 
         Iterator<Piece> whiteRooksIterator = PieceSet.getPieces(Piece.Color.WHITE, Piece.Type.ROOK).iterator();
         getSquare('a', 1).setCurrentPiece(whiteRooksIterator.next());
@@ -104,6 +109,16 @@ public class Board {
         for (int i = 0; i < 8; i++) {
             getSquare(files[i], 2).setCurrentPiece(whitePawnsIterator.next());
             getSquare(files[i], 7).setCurrentPiece(blackPawnsIterator.next());
+        }
+    }
+
+    private static void initializePieces(GameStatus gameStatus) {
+        if (gameStatus == null) {
+            initializePieces();
+        } else {
+            for (GameStatus.Piece piece : gameStatus.getPieceObjs()) {
+                getSquare(piece.getFile().toCharArray()[0], piece.getRank()).setCurrentPiece(piece.makePiece());
+            }
         }
     }
 }

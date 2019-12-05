@@ -59,7 +59,6 @@ public class GameFrame extends JFrame implements Observer {
     public void showTimeOutDialog(String color) {
         JOptionPane.showMessageDialog(this, "Time Out!\n" + color + " lose.\n\n(Close the game when pressed OK)", "Time Out", JOptionPane.WARNING_MESSAGE);
         exit(0);
-
     }
 
     private void loadInterface() {
@@ -77,7 +76,7 @@ public class GameFrame extends JFrame implements Observer {
         newGameMenuItem.setEnabled(false);
 
         saveGameMenuItem = new JMenuItem("Save Game");
-        saveGameMenuItem.setEnabled(false);
+        saveGameMenuItem.setEnabled(true);
 
         preferencesMenuItem = new JMenuItem("Preferences");
         preferencesMenuItem.setEnabled(false);

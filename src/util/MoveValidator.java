@@ -19,6 +19,10 @@ public class MoveValidator {
 
     private static Piece.Color currentMoveColor;
 
+    public static Piece.Color getCurrentMoveColor() {
+        return currentMoveColor;
+    }
+
     public static boolean validateMove(Move move) {
         return validateMove(move, false);
     }

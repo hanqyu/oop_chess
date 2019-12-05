@@ -1,11 +1,15 @@
 package ui;
 
 import util.Core;
+import util.GameModel;
+import util.GameStatus;
+import util.SaveLoader;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 
 public class LaunchFrame extends JFrame {
 
@@ -17,7 +21,6 @@ public class LaunchFrame extends JFrame {
     private JPanel loadGameButtonPanel;
     private JButton newGameButton;
     private JButton loadGameButton;
-    private JFileChooser loadGameFileChooser;
 
     public LaunchFrame() {
         super("CSI2102 at YSU | Main");
@@ -62,7 +65,18 @@ public class LaunchFrame extends JFrame {
         newGameButtonPanel.setBorder(BorderFactory.createEmptyBorder(40, 50, 40, 25));
         newGameButtonPanel.add(newGameButton);
         loadGameButton = new JButton("Load Game");
-        loadGameButton.setEnabled(false);
+        loadGameButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                SaveLoader saveLoader = new SaveLoader();
+                GameStatus gameStatus = saveLoader.loadGame();
+                if (gameStatus != null) {
+                    Core.startGame(gameStatus);
+                }
+                setVisible(false);
+            }
+        });
+        loadGameButton.setEnabled(true);
         loadGameButtonPanel = new JPanel(new GridLayout(1, 1));
         loadGameButtonPanel.setBorder(BorderFactory.createEmptyBorder(40, 25, 40, 50));
         loadGameButtonPanel.add(loadGameButton);

@@ -35,6 +35,12 @@ public class Core {
         gameModel = new GameModel();
     }
 
+    public static void startGame(GameStatus gameStatus) {
+        inGame = true;
+        preferences = new Preferences(gameStatus);
+        gameModel = new GameModel(gameStatus);
+    }
+
     public static String getLocalIPAddress() {
         try {
             return InetAddress.getLocalHost().getHostAddress();

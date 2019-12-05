@@ -14,7 +14,7 @@ public class King extends Piece {
     @Override
     public boolean validateMove(Move move) {
         // TODO King validateMove
-        if (moveValidateCondition(move)) {  // TODO-ValidateCondition을 사용하지 않아야 castling이 가능할 듯
+        if (moveValidateCondition(move)) {
             return Math.abs(move.getDestinationRank() - move.getOriginRank())
                     * Math.abs(move.getDestinationFile() - move.getOriginFile()) == 1;
         }

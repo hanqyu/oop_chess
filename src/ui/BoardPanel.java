@@ -4,10 +4,12 @@ import pieces.Piece;
 import pieces.PieceSet;
 import util.Core;
 import util.GameModel;
+import util.GameStatus;
 import util.Move;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Observable;
 import java.util.Observer;
@@ -30,7 +32,8 @@ public class BoardPanel extends JPanel implements Observer {
         this.usingCustomPieces = Core.getPreferences().isUsingCustomPieces();
         initializeBoardLayeredPane();
         initializeSquares();
-        initializePieces();
+        initializePieces(gameModel.getGameStatus());
+
         gameModel.addObserver(this);
     }
 
@@ -125,14 +128,9 @@ public class BoardPanel extends JPanel implements Observer {
     }
 
     private void initializePieces() {
-        /*
-        TODO-piece
-            Initialize pieces on board
-            Check following code to implement other pieces
-            Highly recommended to use same template!
-         */
         char[] files = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'};
 
+//        TODO Load
         Iterator<Piece> whiteRooksIterator = PieceSet.getPieces(Piece.Color.WHITE, Piece.Type.ROOK).iterator();
         getSquarePanel('a', 1).add(getPieceImageLabel(whiteRooksIterator.next()));
         getSquarePanel('h', 1).add(getPieceImageLabel(whiteRooksIterator.next()));
@@ -174,6 +172,16 @@ public class BoardPanel extends JPanel implements Observer {
         }
     }
 
+    private void initializePieces(GameStatus gameStatus) {
+        if (gameStatus == null) {
+            initializePieces();
+        } else {
+            for (GameStatus.Piece piece: gameStatus.getPieceObjs()) {
+                getSquarePanel(piece.getFile().toCharArray()[0], piece.getRank()).add(getPieceImageLabel(piece.makePiece()));
+            }
+        }
+    }
+
     private void initializeBoardLayeredPane() {
         boardPanel = new JPanel(new GridLayout(8, 8));
         boardPanel.setBounds(0, 0, 800, 800);
@@ -202,4 +210,5 @@ public class BoardPanel extends JPanel implements Observer {
     public void update(Observable o, Object arg) {
         executeMove((Move) arg);
     }
+
 }

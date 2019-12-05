@@ -2,6 +2,20 @@ package util;
 
 public class Preferences {
 
+    Preferences() {}
+
+    Preferences(GameStatus gameStatus) {
+        this.gameMode = gameStatus.getGameMode();
+        this.networkMode = gameStatus.getNetworkMode();
+        this.timerMode = gameStatus.getTimerMode();
+        this.timeLimit = gameStatus.getTimeLimit();
+        this.usingCustomPieces = gameStatus.isUsingCustomPieces();
+        this.boardReversed = gameStatus.isBoardReversed();
+        this.hostIP = gameStatus.getHostIP();
+        this.port = gameStatus.getPort();
+        this.playerName = gameStatus.getPlayerName();
+    }
+
     public enum GameMode {
         ONLINE, OFFLINE
     }
