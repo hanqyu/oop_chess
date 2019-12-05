@@ -130,7 +130,6 @@ public class BoardPanel extends JPanel implements Observer {
     private void initializePieces() {
         char[] files = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'};
 
-//        TODO Load
         Iterator<Piece> whiteRooksIterator = PieceSet.getPieces(Piece.Color.WHITE, Piece.Type.ROOK).iterator();
         getSquarePanel('a', 1).add(getPieceImageLabel(whiteRooksIterator.next()));
         getSquarePanel('h', 1).add(getPieceImageLabel(whiteRooksIterator.next()));
