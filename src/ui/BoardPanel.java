@@ -24,14 +24,14 @@ public class BoardPanel extends JPanel implements Observer {
     private JPanel boardPanel;
     private JPanel[][] squarePanels;
 
-    public BoardPanel(GameModel gameModel) {
+    public BoardPanel(GameModel gameModel, GameStatus gameStatus) {
         super(new BorderLayout());
         this.gameModel = gameModel;
         this.boardReversed = Core.getPreferences().isBoardReversed();
         this.usingCustomPieces = Core.getPreferences().isUsingCustomPieces();
         initializeBoardLayeredPane();
         initializeSquares();
-        initializePieces(gameModel.getGameStatus());
+        initializePieces(gameStatus);
 
         gameModel.addObserver(this);
     }

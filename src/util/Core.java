@@ -37,7 +37,9 @@ public class Core {
     }
 
     public static void startGame(GameStatus gameStatus) {
-        gameModel.getGameFrame().setVisible(false);
+        try {
+            gameModel.getGameFrame().setVisible(false);
+        } catch (NullPointerException ignored) { }
         inGame = true;
         preferences = new Preferences(gameStatus);
         gameModel = new GameModel(gameStatus);

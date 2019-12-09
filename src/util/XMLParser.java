@@ -6,7 +6,7 @@ import java.io.*;
 import java.util.Iterator;
 
 
-public class XMLParser {
+class XMLParser {
     private XMLEventReader eventReader;
     private GameStatus gameStatus = new GameStatus();
 
@@ -71,7 +71,11 @@ public class XMLParser {
         String type = null;
         int pieceRank = 0;
         String pieceFile = null;
-        String special = null;
+        int doubleMoveRank = 0;
+        int rankDifferenceForPawn = 0;
+        int enPassantRank = 0;
+        int enPassantedRank = 0;
+        int movingTimes = 0;
 
         XMLEvent event;
 
@@ -107,17 +111,25 @@ public class XMLParser {
                 case "file":
                     pieceFile = innerValue;
                     break;
-                case "special":
-                    special = innerValue;
+                case "doubleMoveRank":
+                    doubleMoveRank = Integer.parseInt(innerValue);
+                    break;
+                case "rankDifferenceForPawn":
+                    rankDifferenceForPawn = Integer.parseInt(innerValue);
+                    break;
+                case "enPassantRank":
+                    enPassantRank = Integer.parseInt(innerValue);
+                    break;
+                case "enPassantedRank":
+                    enPassantedRank = Integer.parseInt(innerValue);
+                    break;
+                case "movingTimes":
+                    movingTimes = Integer.parseInt(innerValue);
                     break;
             }
         }
 
-        if (special != null) {
-            gameStatus.addPiece(color, type, pieceRank, pieceFile, special);
-        } else {
-            gameStatus.addPiece(color, type, pieceRank, pieceFile);
-        }
+        gameStatus.addPiece(color, type, pieceRank, pieceFile, doubleMoveRank, rankDifferenceForPawn, enPassantRank, enPassantedRank, movingTimes);
     }
 
     void writeFile(GameStatus gameStatus, String fileName) throws FileNotFoundException, XMLStreamException {
@@ -139,7 +151,7 @@ public class XMLParser {
         createNode(eventWriter, "turn", gameStatus.getTurn().toString());
 
         // add general preferences
-        for (String preferenceName: GameStatus.preferenceNames) {
+        for (String preferenceName : GameStatus.preferenceNames) {
             createNode(eventWriter, preferenceName, gameStatus.getValue(preferenceName));
         }
 
@@ -159,11 +171,11 @@ public class XMLParser {
 
         // add pieces
 
-        // - EXAMPLE
-        // <piece color="WHITE" type="QUEEN">
-        //     <rank>8</rank>
-        //     <file>h</file>
-        // </piece>
+        /* - EXAMPLE
+        <piece color="WHITE" type="QUEEN">
+            <rank>8</rank>
+            <file>h</file>
+        </piece> */
         for (GameStatus.Piece piece : gameStatus.getPieceObjs()) {
             eventWriter.add(tab);
             eventWriter.add(eventFactory.createStartElement("", "", "piece"));
@@ -177,10 +189,16 @@ public class XMLParser {
             eventWriter.add(tab);
             createNode(eventWriter, "file", piece.getFile());
 
-            if (piece.getSpecial() != null) {
-                eventWriter.add(tab);
-                createNode(eventWriter, "special", piece.getSpecial());
-            }
+            eventWriter.add(tab);
+            createNode(eventWriter, "doubleMoveRank", String.valueOf(piece.getDoubleMoveRank()));
+            eventWriter.add(tab);
+            createNode(eventWriter, "rankDifferenceForPawn", String.valueOf(piece.getRankDifferenceForPawn()));
+            eventWriter.add(tab);
+            createNode(eventWriter, "enPassantRank", String.valueOf(piece.getEnPassantRank()));
+            eventWriter.add(tab);
+            createNode(eventWriter, "enPassantedRank", String.valueOf(piece.getEnPassantedRank()));
+            eventWriter.add(tab);
+            createNode(eventWriter, "movingTimes", String.valueOf(piece.getMovingTimes()));
 
             eventWriter.add(tab);
             eventWriter.add(eventFactory.createEndElement("", "", "piece"));
@@ -205,10 +223,6 @@ public class XMLParser {
 
         XMLEvent end = eventFactory.createDTD("\n");
         eventWriter.add(end);
-    }
-
-    private void createNode(XMLEventWriter eventWriter, String name, boolean value) throws XMLStreamException {
-        createNode(eventWriter, name, String.valueOf(value));
     }
 
     private void startNode(XMLEventWriter eventWriter, String name, boolean addEnd) throws XMLStreamException {

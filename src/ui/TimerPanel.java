@@ -60,13 +60,8 @@ public class TimerPanel extends JPanel implements Observer {
 
         isCountDownMode = gameStatus.getTimerMode().equals(COUNTDOWN);
 
-        if (isCountDownMode) {
-            whiteTime = Time.valueOf(gameStatus.getWhiteTime().getTime());
-            blackTime = Time.valueOf(gameStatus.getBlackTime().getTime());
-        } else {
-            whiteTime = Time.valueOf("00:00:00");
-            blackTime = Time.valueOf("00:00:00");
-        }
+        whiteTime = Time.valueOf(gameStatus.getWhiteTime().getTime());
+        blackTime = Time.valueOf(gameStatus.getBlackTime().getTime());
 
         initialize();
         gameModel.addObserver(this);

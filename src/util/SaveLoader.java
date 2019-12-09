@@ -13,13 +13,12 @@ import java.util.TimeZone;
 
 public class SaveLoader {
     private GameStatus gameStatus;
-    private JFileChooser loadGameFileChooser;
 
     public SaveLoader() {
         this.gameStatus = new GameStatus();
     }
 
-    public void makeGameStatusInGame(GameModel gameModel) {
+    private void makeGameStatusInGame(GameModel gameModel) {
         gameStatus.setTurn(MoveValidator.getCurrentMoveColor().toString());
 
         gameStatus.setGameMode(Core.getPreferences().getGameMode());
@@ -49,18 +48,18 @@ public class SaveLoader {
         for (char file : files) {
             for (int rank : ranks) {
                 Piece piece = Board.getSquare(file, rank).getCurrentPiece();
-                if (piece == null) {
+                if (piece == null)
                     continue;
-                }
 
                 String color = piece.getColor().toString();
                 String type = piece.getType().toString();
+                int doubleMoveRank = piece.getDoubleMoveRank();
+                int rankDifferenceForPawn = piece.getRankDifferenceForPawn();
+                int enPassantRank = piece.getEnPassantRank();
+                int enPassantedRank = piece.getEnPassantedRank();
+                int movingTimes = piece.getMovingTimes();
 
-                if (piece.getType().equals(Piece.Type.KING) && piece.getEverMoved()) {
-                    gameStatus.addPiece(color, type, rank, String.valueOf(file), "CASTLED");
-                } else {
-                    gameStatus.addPiece(color, type, rank, String.valueOf(file));
-                }
+                gameStatus.addPiece(color, type, rank, String.valueOf(file), doubleMoveRank, rankDifferenceForPawn, enPassantRank, enPassantedRank, movingTimes);
             }
         }
     }
@@ -83,7 +82,7 @@ public class SaveLoader {
 
     public GameStatus loadGame() {
         String userDir = System.getProperty("user.home");
-        loadGameFileChooser = new JFileChooser(userDir + "/Desktop");
+        JFileChooser loadGameFileChooser = new JFileChooser(userDir + "/Desktop");
 
         int returnVal = loadGameFileChooser.showOpenDialog(null);
         if (returnVal == JFileChooser.APPROVE_OPTION) {

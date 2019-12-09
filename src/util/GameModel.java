@@ -21,8 +21,9 @@ public class GameModel extends Observable {
     private ControlPanel controlPanel;
     private MoveHistoryPanel moveHistoryPanel;
     private GameStatus gameStatus;
-    private static int undoListIndex = -1;
+    //    TODO save to gameStatus below properties
     private static List isCaptureOrCastlingMove = new ArrayList();
+    private static int undoListIndex = -1;
     private static List executeMoveReverseList = new ArrayList();
     private static List capturedOrCastlingPieceList = new ArrayList();
 
@@ -36,6 +37,7 @@ public class GameModel extends Observable {
     public GameModel(GameStatus gameStatus) {
         this.gameStatus = gameStatus;
         Board.initialize(gameStatus);
+        MoveValidator.initialize(gameStatus);
         initialize();
     }
 
@@ -188,7 +190,6 @@ public class GameModel extends Observable {
             capturedPieceInfo.add(move.getDestinationFile());
             capturedPieceInfo.add(move.getDestinationRank() - move.getPiece().getRankDifferenceForPawn());
             capturedOrCastlingPieceList.add(capturedPieceInfo);
-            System.out.println(capturedPieceInfo);
         }
     }
 
@@ -199,9 +200,6 @@ public class GameModel extends Observable {
         if (move.getPiece().getType().equals(Piece.Type.PAWN)
                 && (move.getDestinationRank() - move.getOriginRank() == move.getPiece().getRankDifferenceForPawn() * 2)) {
             MoveValidator.setEnPassantTiming(true);
-        }
-        if (move.getPiece().hasSpecialMove()) {
-            move.evokedSpecialMove();
         }
         moveHistoryPanel.printMove(move);
         boardPanel.executeMove(move);
@@ -305,7 +303,7 @@ public class GameModel extends Observable {
 
     private void initializeUIComponents() {
         boardPanel = new BoardPanel(this, gameStatus);
-        timerPanel = new TimerPanel(this, gameStatus);
+        timerPanel = (gameStatus == null) ? new TimerPanel(this) : new TimerPanel(this, gameStatus);
         controlPanel = new ControlPanel(this);
         moveHistoryPanel = new MoveHistoryPanel(this);
         gameFrame = new GameFrame(this);
@@ -393,5 +391,7 @@ public class GameModel extends Observable {
         return gameStatus;
     }
 
-    public GameFrame getGameFrame() { return gameFrame; }
+    public GameFrame getGameFrame() {
+        return gameFrame;
+    }
 }

@@ -1,16 +1,13 @@
 package pieces;
 
-import board.Board;
 import util.Move;
 import util.MoveValidator;
 
 public class Pawn extends Piece {
-//     private boolean everMoved;
 
     public Pawn(Color color) {
         super(color);
         this.type = Type.PAWN;
-//        this.everMoved = false;
         this.doubleMoveRank = 2;  // 초기위치의 rank 지정
         if(this.color.equals(Color.BLACK)){
             this.doubleMoveRank = 7;
@@ -27,7 +24,6 @@ public class Pawn extends Piece {
         if(this.color.equals(Color.BLACK)){
             this.enPassantedRank = 5;
         }
-//        this.hasSpecialMove = true;  // able to go 2 rank at first
     }
 
     @Override

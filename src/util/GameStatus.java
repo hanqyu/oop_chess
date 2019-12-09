@@ -32,18 +32,22 @@ public class GameStatus {
         private pieces.Piece.Type type;
         private int rank;
         private String file;
-        private String special;
+        private int doubleMoveRank;
+        private int rankDifferenceForPawn;
+        private int enPassantRank;
+        private int enPassantedRank;
+        private int movingTimes;
 
-        Piece(String color, String type, int rank, String file, String special) {
+        Piece(String color, String type, int rank, String file, int doubleMoveRank, int rankDifferenceForPawn, int enPassantRank, int enPassantedRank, int movingTimes) {
             this.color = pieces.Piece.Color.valueOf(color);
             this.type = pieces.Piece.Type.valueOf(type);
             this.rank = rank;
             this.file = file;
-            this.special = special;
-        }
-
-        Piece(String color, String type, int rank, String file) {
-            this(color, type, rank, file, null);
+            this.doubleMoveRank = doubleMoveRank;
+            this.rankDifferenceForPawn = rankDifferenceForPawn;
+            this.enPassantRank = enPassantRank;
+            this.enPassantedRank = enPassantedRank;
+            this.movingTimes = movingTimes;
         }
 
         public pieces.Piece.Color getColor() {
@@ -62,16 +66,29 @@ public class GameStatus {
             return file;
         }
 
-        String getSpecial() {
-            return special;
+        int getDoubleMoveRank() {
+            return doubleMoveRank;
+        }
+
+        int getRankDifferenceForPawn() {
+            return rankDifferenceForPawn;
+        }
+
+        int getEnPassantRank() {
+            return enPassantRank;
+        }
+
+        int getEnPassantedRank() {
+            return enPassantedRank;
+        }
+
+        int getMovingTimes() {
+            return movingTimes;
         }
 
         public pieces.Piece makePiece() {
-            // TODO check if Casting infomation set properly
+            // TODO check if Casting information set properly
             pieces.Piece pieceObj = PieceSet.getPieces(color, type).iterator().next();
-            if (getSpecial() != null) {
-                pieceObj.setEverMoved();
-            }
             return pieceObj;
         }
     }
@@ -117,12 +134,8 @@ public class GameStatus {
         this.times.add(new Time(color, time));
     }
 
-    void addPiece(String color, String type, int rank, String file, String special) {
-        this.pieceObjs.add(new Piece(color, type, rank, file, special));
-    }
-
-    void addPiece(String color, String type, int rank, String file) {
-        this.pieceObjs.add(new Piece(color, type, rank, file));
+    void addPiece(String color, String type, int rank, String file, int doubleMoveRank, int rankDifferenceForPawn, int enPassantRank, int enPassantedRank, int movingTimes) {
+        this.pieceObjs.add(new Piece(color, type, rank, file, doubleMoveRank, rankDifferenceForPawn, enPassantRank, enPassantedRank, movingTimes));
     }
 
     public Time getWhiteTime() {
