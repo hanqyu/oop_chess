@@ -56,9 +56,14 @@ public class GameFrame extends JFrame implements Observer {
         JOptionPane.showMessageDialog(this, "That's a Checkmate!", "Checkmate", JOptionPane.WARNING_MESSAGE);
     }
 
+    public void showStalemateDialog() {
+        JOptionPane.showMessageDialog(this, "That's a Stalemate!", "Stalemate", JOptionPane.WARNING_MESSAGE);
+    }
+
     public void showTimeOutDialog(String color) {
         JOptionPane.showMessageDialog(this, "Time Out!\n" + color + " lose.\n\n(Close the game when pressed OK)", "Time Out", JOptionPane.WARNING_MESSAGE);
         exit(0);
+
     }
 
     private void loadInterface() {
@@ -76,7 +81,7 @@ public class GameFrame extends JFrame implements Observer {
         newGameMenuItem.setEnabled(false);
 
         saveGameMenuItem = new JMenuItem("Save Game");
-        saveGameMenuItem.setEnabled(true);
+        saveGameMenuItem.setEnabled(false);
 
         preferencesMenuItem = new JMenuItem("Preferences");
         preferencesMenuItem.setEnabled(false);

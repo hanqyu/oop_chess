@@ -12,8 +12,6 @@ import java.io.FileNotFoundException;
 import java.util.Observable;
 import java.util.Observer;
 
-import static java.lang.System.exit;
-
 public class ControlPanel extends JPanel implements Observer {
 
     private GameModel gameModel;
@@ -33,7 +31,8 @@ public class ControlPanel extends JPanel implements Observer {
         this.setLayout(new GridLayout(0, 1));
 
         undoButton = new JButton("Request Undo");
-        undoButton.setEnabled(false);
+        undoButton.setEnabled(true);
+        undoButton.addActionListener(new UndoListener(gameModel));
         saveButton = new JButton("Save Game");
         saveButton.setEnabled(true);
         saveButton.addActionListener(e -> {
@@ -57,6 +56,7 @@ public class ControlPanel extends JPanel implements Observer {
             if (gameStatus != null) {
                 Core.startGame(gameStatus);
             }
+            setVisible(false);
         });
 
         this.add(undoButton);

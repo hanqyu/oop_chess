@@ -4,13 +4,10 @@ import util.Move;
 
 public class Knight extends Piece {
 
-    private boolean everMoved;
-
     public Knight(Color color) {
         super(color);
         this.type = Type.KNIGHT;
-        this.everMoved = false;
-        this.hasSpecialMove = true;  // castling
+        this.hasSpecialMove = false;
     }
 
     @Override
@@ -32,16 +29,4 @@ public class Knight extends Piece {
         return false;
     }
 
-    public boolean everMoved() {
-        return everMoved;
-    }
-
-    public boolean setEverMoved(boolean condition) {
-        return everMoved = condition;
-    }
-
-    @Override
-    public void evokedSpecialMove() {
-        setEverMoved(true);
-    }
 }

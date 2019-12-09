@@ -13,8 +13,9 @@ public class Bishop extends Piece {
     public boolean validateMove(Move move) {
 //        TODO Bishop ValidateMove
         if (moveValidateCondition(move)) {
-            return Math.abs(move.getDestinationFile() - move.getOriginFile())
-                    == Math.abs(move.getDestinationRank() - move.getOriginRank());
+            if(Math.abs(move.getDestinationFile() - move.getOriginFile()) == Math.abs(move.getDestinationRank() - move.getOriginRank())){
+                return true;
+            }
         }
 
         return false;

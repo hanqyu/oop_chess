@@ -1,6 +1,5 @@
 package util;
 
-import ui.GameFrame;
 import ui.LaunchFrame;
 import ui.PreferencesFrame;
 
@@ -37,7 +36,6 @@ public class Core {
     }
 
     public static void startGame(GameStatus gameStatus) {
-        gameModel.getGameFrame().setVisible(false);
         inGame = true;
         preferences = new Preferences(gameStatus);
         gameModel = new GameModel(gameStatus);
@@ -66,5 +64,4 @@ public class Core {
     public static boolean isInGame() {
         return inGame;
     }
-
 }

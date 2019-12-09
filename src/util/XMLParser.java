@@ -131,7 +131,6 @@ public class XMLParser {
         StartDocument startDocument = eventFactory.createStartDocument();
         eventWriter.add(startDocument);
 
-        eventWriter.add(end);
         StartElement statusStartElem = eventFactory.createStartElement("", "", "status");
         eventWriter.add(statusStartElem);
         eventWriter.add(end);
