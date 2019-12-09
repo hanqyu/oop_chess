@@ -66,5 +66,4 @@ public class Core {
     public static boolean isInGame() {
         return inGame;
     }
-
 }

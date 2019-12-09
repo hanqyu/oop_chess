@@ -30,6 +30,12 @@ public class MoveValidator {
         return currentMoveColor;
     }
 
+    public static void switchCurrentColor() {
+        currentMoveColor = currentMoveColor.equals(Piece.Color.WHITE) ? Piece.Color.BLACK : Piece.Color.WHITE;
+    }
+
+    private static boolean enPassantTiming;
+
     public static boolean validateMove(Move move) {
         return validateMove(move, false);
     }
@@ -68,6 +74,11 @@ public class MoveValidator {
             return false;
         }
 
+        // check for suicide check
+        if (isSuicideCheck(move)) {
+            return false;
+        }
+
         currentMoveColor = currentMoveColor.equals(Piece.Color.WHITE) ? Piece.Color.BLACK : Piece.Color.WHITE;
         return true;
     }
@@ -79,6 +90,69 @@ public class MoveValidator {
     static int defendKingRank;
     static char[] files = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'};
     static int[] ranks = {1, 2, 3, 4, 5, 6, 7, 8};
+
+    public static boolean getEnPassantTiming() {
+        return enPassantTiming;
+    }
+
+    public static void setEnPassantTiming(boolean b) {
+        enPassantTiming = b;
+    }
+
+    public static boolean isSuicideCheck(Move move) {
+        attackColor = move.getPiece().getColor();
+        Piece capturedOpponentPiece = null;
+
+        if (Board.getSquare(move.getDestinationFile(), move.getDestinationRank()).getCurrentPiece() != null) {
+            capturedOpponentPiece = Board.getSquare(move.getDestinationFile(), move.getDestinationRank()).getCurrentPiece();
+        }
+        Board.getSquare(move.getOriginFile(), move.getOriginRank()).setCurrentPiece(null);
+        Board.getSquare(move.getDestinationFile(), move.getDestinationRank()).setCurrentPiece(move.getPiece());
+
+        for (char file : files) {
+            for (int rank : ranks) {
+                if (Board.getSquare(file, rank).getCurrentPiece() == null) {
+                    continue;
+                }
+                if (Board.getSquare(file, rank).getCurrentPiece().getType().equals(Piece.Type.KING)
+                        && Board.getSquare(file, rank).getCurrentPiece().getColor().equals(attackColor)) {
+                    attackKingFile = file;
+                    attackKingRank = rank;
+                }
+            }
+        }
+
+        for (char file : files) {
+            for (int rank : ranks) {
+                if (Board.getSquare(file, rank).getCurrentPiece() == null) {
+                    continue;
+                }
+                if (!Board.getSquare(file, rank).getCurrentPiece().getType().equals(attackColor)) {
+                    Piece opponentPiece = Board.getSquare(file, rank).getCurrentPiece();
+                    if (opponentPiece.validateMove(new Move(file, rank, attackKingFile, attackKingRank))) {
+                        if (validateClearPath(new Move(file, rank, attackKingFile, attackKingRank))) {
+                            Board.getSquare(move.getOriginFile(), move.getOriginRank()).setCurrentPiece(move.getPiece());
+                            if (capturedOpponentPiece == null) {
+                                Board.getSquare(move.getDestinationFile(), move.getDestinationRank()).setCurrentPiece(null);
+                            } else {
+                                Board.getSquare(move.getDestinationFile(), move.getDestinationRank()).setCurrentPiece(capturedOpponentPiece);
+                            }
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+
+        Board.getSquare(move.getOriginFile(), move.getOriginRank()).setCurrentPiece(move.getPiece());
+        if (capturedOpponentPiece == null) {
+            Board.getSquare(move.getDestinationFile(), move.getDestinationRank()).setCurrentPiece(null);
+        } else {
+            Board.getSquare(move.getDestinationFile(), move.getDestinationRank()).setCurrentPiece(capturedOpponentPiece);
+        }
+
+        return false;
+    }
 
     public static boolean isCheckMove(Move move) {
         // TODO-check
@@ -134,15 +208,14 @@ public class MoveValidator {
 
         for (char file : files) {
             for (int rank : ranks) {
-                if (Board.getSquare(file, rank).getCurrentPiece() == null) { }
+                if (Board.getSquare(file, rank).getCurrentPiece() == null) {
+                }
                 if (Board.getSquare(file, rank).getCurrentPiece() != null
                         && !(Board.getSquare(file, rank).getCurrentPiece().getColor().equals(move.getPiece().getColor()))) { // move를 유발한 색과 다른 색(defend측)의 기물을 모두 탐색
                     Piece defendPiece = Board.getSquare(file, rank).getCurrentPiece(); // 탐색되면 defendPiece에 할당
-//                    System.out.println(defendPiece.toString());
                     for (char defFile : files) {
                         for (int defRank : ranks) {                                     // 갈 수 있는 위치들을 탐색
                             if (defendPiece.validateMove(new Move(file, rank, defFile, defRank))) { // 갈 수 있다면?
-//                                System.out.println(defendPiece.toString()+"'ve gone.. ("+defFile+", "+defRank);
                                 if (Board.getSquare(defFile, defRank).getCurrentPiece() == null) {  // 목적지에 아무도 없다면?
                                     Board.getSquare(defFile, defRank).setCurrentPiece(defendPiece);  // 목적지에 defendPiece를 두는데
                                     if (defendPiece.getType() == Piece.Type.KING) {  // 왕이 움직이는 경우엔 우리가 임시로 가진 King의 위치를 변경
@@ -167,7 +240,6 @@ public class MoveValidator {
                                 if (Board.getSquare(defFile, defRank).getCurrentPiece() != null
                                         && Board.getSquare(defFile, defRank).getCurrentPiece().getColor() != defendPiece.getColor()) { // 목적지에 다른 색의 기물이 있다면?
                                     opponentPiece = Board.getSquare(defFile, defRank).getCurrentPiece(); // 그 기물을 저장해두고
-//                                    System.out.println("and captured ("+opponentPiece.toString()+")");
                                     Board.getSquare(defFile, defRank).setCurrentPiece(defendPiece);      // 목적지에 defendPiece를 두고
                                     Board.getSquare(file, rank).setCurrentPiece(null);                   // 원래 있던 곳은 null
                                     if (defendPiece.getType() == Piece.Type.KING) {  // 왕이 움직이는 경우엔 우리가 임시로 가진 King의 위치를 변경
@@ -201,12 +273,12 @@ public class MoveValidator {
     public static boolean isDefendSuccess() {
         for (char file : files) {
             for (int rank : ranks) {
-                if (Board.getSquare(file, rank).getCurrentPiece() == null) { }
+                if (Board.getSquare(file, rank).getCurrentPiece() == null) {
+                }
                 if (Board.getSquare(file, rank).getCurrentPiece() != null
                         && Board.getSquare(file, rank).getCurrentPiece().getColor().equals(attackColor)) { // 다시 공격자의 기물을 하나씩 탐색
                     if (Board.getSquare(file, rank).getCurrentPiece().validateMove(new Move(file, rank, defendKingFile, defendKingRank))) { // 만약 하나의 기물이라도 방어자의 King을 잡을 수 있다면?
                         if (validateClearPath(new Move(file, rank, defendKingFile, defendKingRank))) {  // 또한 방어자의 King 에게 다다르는 길이 Clear 하다면?
-//                            System.out.println("But "+Board.getSquare(file,rank).getCurrentPiece().toString()+" got the King");  // false
                             return false;
                         }
                     }
@@ -218,7 +290,7 @@ public class MoveValidator {
 
     private static boolean validateClearPath(Move move) {
         // TODO-movement
-        if (Math.abs(move.getDestinationFile() - move.getOriginFile()) == 1 || Math.abs(move.getDestinationRank() - move.getOriginRank()) == 1) {  // 한칸씩만 움직이는 경우 당연히 true
+        if (Math.abs(move.getDestinationFile() - move.getOriginFile()) == 1 || Math.abs(move.getDestinationRank() - move.getOriginRank()) == 1) {  // 한칸씩만 움직이는 경우 혹은 knight 의 경우 당연히 true
             return true;
         }
 
@@ -260,6 +332,9 @@ public class MoveValidator {
     }
 
     private static boolean isValidCastlingPosition(Move move) {
+        if (!move.getPiece().getType().equals(Piece.Type.KING)) {
+            return false;
+        }
         if (move.getDestinationFile() == 'c' && move.getDestinationRank() == 1) {
             return true;
         }
@@ -277,14 +352,14 @@ public class MoveValidator {
 
     public static boolean isValidCastling(Move move) {
         if (isValidCastlingPosition(move)) {
-            if (!move.getPiece().getEverMoved()) {
+            if (move.getPiece().getMovingTimes() == 0) {
                 if (move.getDestinationFile() == 'c') { //queenSideCastling
                     if (Board.getSquare('a', move.getOriginRank()).getCurrentPiece() == null) {  // queenSideROOK 자리에 아무것도 없는가? false
                         return false;
                     }
                     if (Board.getSquare('a', move.getOriginRank()).getCurrentPiece() != null   // queenSideRook 자리에 무언가 있는가?
                             && Board.getSquare('a', move.getOriginRank()).getCurrentPiece().getType().equals(Piece.Type.ROOK)  // 그리고 그게 ROOK 인가?
-                            && !(Board.getSquare('a', move.getOriginRank()).getCurrentPiece().getEverMoved())) {  // 그 ROOK 이 한번도 움직이지 않았는가?
+                            && (Board.getSquare('a', move.getOriginRank()).getCurrentPiece().getMovingTimes() == 0)) {  // 그 ROOK 이 한번도 움직이지 않았는가?
                         for (char file : files) {
                             for (int rank : ranks) {
                                 if (Board.getSquare(file, rank).getCurrentPiece() != null
@@ -326,7 +401,7 @@ public class MoveValidator {
                     }
                     if (Board.getSquare('h', move.getOriginRank()).getCurrentPiece() != null   // kingSideRook 자리에 무언가 있는가?
                             && Board.getSquare('h', move.getOriginRank()).getCurrentPiece().getType().equals(Piece.Type.ROOK)  // 그리고 그게 ROOK 인가?
-                            && !(Board.getSquare('h', move.getOriginRank()).getCurrentPiece().getEverMoved())) {  // 그 ROOK 이 한번도 움직이지 않았는가?
+                            && (Board.getSquare('h', move.getOriginRank()).getCurrentPiece().getMovingTimes() == 0)) {  // 그 ROOK 이 한번도 움직이지 않았는가?
                         for (char file : files) {
                             for (int rank : ranks) {
                                 if (Board.getSquare(file, rank).getCurrentPiece() != null
@@ -361,6 +436,61 @@ public class MoveValidator {
                         return true;
                     }
                 }
+            }
+        }
+        return false;
+    }
+
+    public static boolean isPromotionPossible(Move move) {
+        int promotionRank = 8;
+        if (move.getPiece().getColor().equals(Piece.Color.BLACK)) {
+            promotionRank = 1;
+        }
+        if (move.getPiece().getType().equals(Piece.Type.PAWN)) {
+            if (move.getDestinationRank() == promotionRank) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static boolean isStalemateMove(Move move) {
+        Piece.Color attackColor = move.getPiece().getColor();
+
+        for (char file : files) {
+            for (int rank : ranks) {
+                if (Board.getSquare(file, rank).getCurrentPiece() == null) {
+                    continue;
+                }
+                if (!Board.getSquare(file, rank).getCurrentPiece().getColor().equals(attackColor)) {
+                    Piece stalematePreventer = Board.getSquare(file, rank).getCurrentPiece();
+                    for (char anyFile : files) {
+                        for (int anyRank : ranks) {
+                            if (stalematePreventer.validateMove(new Move(file, rank, anyFile, anyRank))) {
+                                if (validateClearPath(new Move(file, rank, anyFile, anyRank))) {
+                                    Move stalematePrevent = new Move(stalematePreventer, file, rank, anyFile, anyRank);
+                                    if (!isSuicideCheck(stalematePrevent)) {
+                                        return false;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        return true;
+    }
+
+    public static boolean isEnPassantPossible(Move move) {
+        if (Board.getSquare(move.getDestinationFile(), move.getDestinationRank() - move.getPiece().getRankDifferenceForPawn()).getCurrentPiece() == null) {
+            return false;
+        }
+        if (Board.getSquare(move.getDestinationFile(), move.getDestinationRank() - move.getPiece().getRankDifferenceForPawn()).getCurrentPiece().getType().equals(Piece.Type.PAWN)
+                && !Board.getSquare(move.getDestinationFile(), move.getDestinationRank() - move.getPiece().getRankDifferenceForPawn()).getCurrentPiece().getColor().equals(move.getPiece().getColor())) {
+            if (enPassantTiming) {
+                return true;
             }
         }
         return false;

@@ -19,9 +19,12 @@ public abstract class Piece {
     protected Type type;
     protected int doubleMoveRank;
     protected int rankDifferenceForPawn;
+    protected int enPassantRank;
+    protected int enPassantedRank;
     protected boolean capture;
     protected boolean hasSpecialMove;
     protected boolean everMoved = false;
+    protected int movingTimes = 0;
 
     public Piece(Color color) {
         this.color = color;
@@ -86,11 +89,26 @@ public abstract class Piece {
                 && !move.getPiece().getColor().equals(move.getCapturedPiece().getColor()));
     }
 
+    public int getRankDifferenceForPawn(){
+        return rankDifferenceForPawn;
+    }
 
     public void evokedSpecialMove() { }
 
     public void setEverMoved(){
         this.everMoved = true;
+    }
+
+    public int getMovingTimes(){
+        return this.movingTimes;
+    }
+
+    public void plusMovingTimes(){
+        this.movingTimes+=1;
+    }
+
+    public void minusMovingTimes(){
+        this.movingTimes-=1;
     }
 
     public boolean getEverMoved() { return this.everMoved; }

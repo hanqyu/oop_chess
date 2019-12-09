@@ -279,7 +279,9 @@ public class GameStatus {
         this.timeLimit = timeLimit;
     }
 
-    private void setTimeLimit(String timeLimit) { setTimeLimit(Integer.parseInt(timeLimit)); }
+    private void setTimeLimit(String timeLimit) {
+        setTimeLimit(Integer.parseInt(timeLimit));
+    }
 
     boolean isUsingCustomPieces() {
         return usingCustomPieces;

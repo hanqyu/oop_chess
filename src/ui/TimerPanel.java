@@ -33,28 +33,39 @@ public class TimerPanel extends JPanel implements Observer {
 
     private boolean isCountDownMode;
 
+    public TimerPanel(GameModel gameModel) {
+        super(new BorderLayout());
+        this.gameModel = gameModel;
+
+        isCountDownMode = Core.getPreferences().getTimerMode().equals(COUNTDOWN);
+
+        if (isCountDownMode) {
+            Integer minute = Core.getPreferences().getTimeLimit();
+            Integer hour = (minute / 60) % 100;  // ignore more than 100
+            String timeLimit = hour.toString() + ":" + minute + ":00";
+            whiteTime = Time.valueOf(timeLimit);
+            blackTime = Time.valueOf(timeLimit);
+        } else {
+            whiteTime = Time.valueOf("00:00:00");
+            blackTime = Time.valueOf("00:00:00");
+        }
+
+        initialize();
+        gameModel.addObserver(this);
+    }
+
     public TimerPanel(GameModel gameModel, GameStatus gameStatus) {
         super(new BorderLayout());
         this.gameModel = gameModel;
 
-        if (gameStatus == null) {
-            isCountDownMode = Core.getPreferences().getTimerMode().equals(COUNTDOWN);
+        isCountDownMode = gameStatus.getTimerMode().equals(COUNTDOWN);
 
-            if (isCountDownMode) {
-                Integer minute = Core.getPreferences().getTimeLimit();
-                Integer hour = (minute / 60) % 100;  // ignore more than 100
-                String timeLimit = String.format("%02d", hour) + ":" + String.format("%02d", minute % 60) + ":00";
-                whiteTime = Time.valueOf(timeLimit);
-                blackTime = Time.valueOf(timeLimit);
-            } else {
-                whiteTime = Time.valueOf("00:00:00");
-                blackTime = Time.valueOf("00:00:00");
-            }
-        } else {
-            isCountDownMode = gameStatus.getTimerMode().equals(COUNTDOWN);
-
+        if (isCountDownMode) {
             whiteTime = Time.valueOf(gameStatus.getWhiteTime().getTime());
             blackTime = Time.valueOf(gameStatus.getBlackTime().getTime());
+        } else {
+            whiteTime = Time.valueOf("00:00:00");
+            blackTime = Time.valueOf("00:00:00");
         }
 
         initialize();

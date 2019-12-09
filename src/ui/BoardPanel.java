@@ -9,7 +9,6 @@ import util.Move;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Observable;
 import java.util.Observer;
@@ -25,14 +24,14 @@ public class BoardPanel extends JPanel implements Observer {
     private JPanel boardPanel;
     private JPanel[][] squarePanels;
 
-    public BoardPanel(GameModel gameModel, GameStatus gameStatus) {
+    public BoardPanel(GameModel gameModel) {
         super(new BorderLayout());
         this.gameModel = gameModel;
         this.boardReversed = Core.getPreferences().isBoardReversed();
         this.usingCustomPieces = Core.getPreferences().isUsingCustomPieces();
         initializeBoardLayeredPane();
         initializeSquares();
-        initializePieces(gameStatus);
+        initializePieces(gameModel.getGameStatus());
 
         gameModel.addObserver(this);
     }
@@ -49,6 +48,10 @@ public class BoardPanel extends JPanel implements Observer {
             getSquarePanel(originFile, originRank).getComponent(0).setVisible(true);
             gameModel.onMoveRequest(originFile, originRank, destinationFile, destinationRank);
         }
+    }
+
+    public void submitPromotionRequest(char promotionFile, int promotionRank, Piece.Type type, Piece.Color color) {
+        gameModel.executePromotion(promotionFile, promotionRank, type, color);
     }
 
     public void executeMove(Move move) {
@@ -130,6 +133,7 @@ public class BoardPanel extends JPanel implements Observer {
     private void initializePieces() {
         char[] files = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'};
 
+//        TODO Load
         Iterator<Piece> whiteRooksIterator = PieceSet.getPieces(Piece.Color.WHITE, Piece.Type.ROOK).iterator();
         getSquarePanel('a', 1).add(getPieceImageLabel(whiteRooksIterator.next()));
         getSquarePanel('h', 1).add(getPieceImageLabel(whiteRooksIterator.next()));
@@ -175,7 +179,7 @@ public class BoardPanel extends JPanel implements Observer {
         if (gameStatus == null) {
             initializePieces();
         } else {
-            for (GameStatus.Piece piece: gameStatus.getPieceObjs()) {
+            for (GameStatus.Piece piece : gameStatus.getPieceObjs()) {
                 getSquarePanel(piece.getFile().toCharArray()[0], piece.getRank()).add(getPieceImageLabel(piece.makePiece()));
             }
         }
@@ -201,6 +205,13 @@ public class BoardPanel extends JPanel implements Observer {
         return pieceImageLabel;
     }
 
+    public JLabel getPieceImage(Piece piece) {
+        Image pieceImage = new ImageIcon(getClass().getResource(piece.getImageFileName())).getImage();
+        pieceImage = pieceImage.getScaledInstance(SQUARE_DIMENSION, SQUARE_DIMENSION, Image.SCALE_SMOOTH);
+        JLabel pieceImageLabel = new JLabel(new ImageIcon(pieceImage));
+        return pieceImageLabel;
+    }
+
     public boolean isBoardReversed() {
         return boardReversed;
     }
@@ -209,5 +220,4 @@ public class BoardPanel extends JPanel implements Observer {
     public void update(Observable o, Object arg) {
         executeMove((Move) arg);
     }
-
 }
