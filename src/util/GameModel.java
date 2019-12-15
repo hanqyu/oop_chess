@@ -21,7 +21,6 @@ public class GameModel extends Observable {
     private ControlPanel controlPanel;
     private MoveHistoryPanel moveHistoryPanel;
     private GameStatus gameStatus;
-    //    TODO save to gameStatus below properties
     private static List isCaptureOrCastlingMove = new ArrayList();
     private static int undoListIndex = -1;
     private static List executeMoveReverseList = new ArrayList();
